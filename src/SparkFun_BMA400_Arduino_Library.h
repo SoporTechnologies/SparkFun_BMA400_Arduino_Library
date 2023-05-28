@@ -48,6 +48,8 @@ struct BMA400_SensorData
     uint32_t sensorTimeMillis;
 };
 
+typedef struct bma400_sensor_data BMA400_RawData;
+
 // Enum for setting individual accel parameters
 enum BMA400_AccelParam
 {
@@ -133,6 +135,7 @@ class BMA400
 
         // Latest measurement from the sensor
         BMA400_SensorData data;
+        BMA400_RawData rawData;
 
     private:
         // Sensor initialization, after communication interface has been selected

@@ -420,7 +420,6 @@ int8_t BMA400::getSensorData(bool sensorTime)
     uint8_t dataSel = sensorTime ? BMA400_DATA_SENSOR_TIME : BMA400_DATA_ONLY;
 
     // Get raw data from sensor
-    bma400_sensor_data rawData;
     err = bma400_get_accel_data(dataSel, &rawData, &sensor);
     if(err != BMA400_OK) return err;
 
@@ -750,6 +749,16 @@ int8_t BMA400::getFIFOData(BMA400_SensorData* data, uint16_t* numData)
         rawData[i].sensortime = fifoData.fifo_sensor_time;
         convertRawData(&rawData[i], &data[i], range, bitWidth);
     }
+
+    // Add the most recent FIFO data to the class member
+    this->rawData.x = rawData[*numData-1].x;
+    this->rawData.y = rawData[*numData-1].y;
+    this->rawData.z = rawData[*numData-1].z;
+    this->rawData.sensortime = rawData[*numData-1].sensortime;
+    this->data.accelX = data[*numData-1].accelX;
+    this->data.accelY = data[*numData-1].accelY;
+    this->data.accelZ = data[*numData-1].accelZ;
+    this->data.sensorTimeMillis = data[*numData-1].sensorTimeMillis;
 
     return BMA400_OK;
 }
