@@ -420,6 +420,7 @@ int8_t BMA400::getSensorData(bool sensorTime)
     uint8_t dataSel = sensorTime ? BMA400_DATA_SENSOR_TIME : BMA400_DATA_ONLY;
 
     // Get raw data from sensor
+    bma400_sensor_data rawData;
     err = bma400_get_accel_data(dataSel, &rawData, &sensor);
     if(err != BMA400_OK) return err;
 
@@ -441,6 +442,12 @@ int8_t BMA400::getSensorData(bool sensorTime)
 /// @param bitWidth Number of bits per axis (8 or 12)
 void BMA400::convertRawData(bma400_sensor_data* rawData, BMA400_SensorData* data, uint8_t range, uint8_t bitWidth)
 {
+    // Copy raw data
+    data->X = rawData->x;
+    data->Y = rawData->y;
+    data->Z = rawData->z;
+    data->sensorTime = rawData->sensortime;
+
     // Convert range setting to g-range. This computation is shorthand for the
     // following settings:
     // 
@@ -751,14 +758,9 @@ int8_t BMA400::getFIFOData(BMA400_SensorData* data, uint16_t* numData)
     }
 
     // Add the most recent FIFO data to the class member
-    this->rawData.x = rawData[*numData-1].x;
-    this->rawData.y = rawData[*numData-1].y;
-    this->rawData.z = rawData[*numData-1].z;
-    this->rawData.sensortime = rawData[*numData-1].sensortime;
-    this->data.accelX = data[*numData-1].accelX;
-    this->data.accelY = data[*numData-1].accelY;
-    this->data.accelZ = data[*numData-1].accelZ;
-    this->data.sensorTimeMillis = data[*numData-1].sensorTimeMillis;
+    if ( *numData > 0 ) {
+      this->data = data[*numData-1];
+    }
 
     return BMA400_OK;
 }

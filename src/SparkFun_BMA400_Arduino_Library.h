@@ -39,6 +39,12 @@ struct BMA400_InterfaceData
 // Struct to hold acceleration data
 struct BMA400_SensorData
 {
+    /* Raw sensor data */
+    int16_t X;
+    int16_t Y;
+    int16_t Z;
+    uint32_t sensorTime;
+
     // Acceleration in g's
     float accelX;
     float accelY;
@@ -47,8 +53,6 @@ struct BMA400_SensorData
     // Time of this data in milliseconds, measured by sensor
     uint32_t sensorTimeMillis;
 };
-
-typedef struct bma400_sensor_data BMA400_RawData;
 
 // Enum for setting individual accel parameters
 enum BMA400_AccelParam
@@ -135,7 +139,6 @@ class BMA400
 
         // Latest measurement from the sensor
         BMA400_SensorData data;
-        BMA400_RawData rawData;
 
     private:
         // Sensor initialization, after communication interface has been selected
